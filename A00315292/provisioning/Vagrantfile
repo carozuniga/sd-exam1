@@ -1,0 +1,46 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.ssh.insert_key = false
+  config.omnibus.chef_version = :latest
+  config.vm.define :centos_server do |server|
+    server.vm.box = "centos/7"
+    server.vm.network :private_network, ip: "192.168.33.10"
+    server.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "2048","--cpus", "8", "--name", "centos_webserver_1" ]
+    end
+     config.vm.provision :chef_solo do |chef|
+       chef.install = false
+       chef.cookbooks_path = "cookbooks"
+       chef.add_recipe "httpd"
+     end 
+  end
+  config.vm.define :centos_server2 do |server2|
+    server2.vm.box = "centos/7"
+    server2.vm.network :private_network, ip: "192.168.33.11"
+    server2.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "2048","--cpus", "8", "--name", "centos_webserver_2" ]
+    end
+     config.vm.provision :chef_solo do |chef|
+       chef.install = false
+       chef.cookbooks_path = "cookbooks"
+       chef.add_recipe "httpd2"
+     end 
+  end
+  config.vm.define :balanceador do |hp|
+    hp.vm.box = "centos/7"
+    hp.vm.network :private_network, ip: "192.168.33.12"
+    hp.vm.network "public_network", bridge: "eth4", ip:"192.168.131.116", netmask: "255.255.255.0"    
+    hp.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "1024","--cpus", "1", "--name", "balanceador" ]
+    end
+    hp.vm.provision :chef_solo do |chef|
+      chef.install = false
+      chef.cookbooks_path = "cookbooks"
+      chef.add_recipe "haproxy"
+    end
+  end
+end
