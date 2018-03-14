@@ -4,7 +4,7 @@
 **Nombre:** Carolina Zúñiga Ospina  
 **Código:**  A00315292
 
-**Url Repositorio:** 
+**Url Repositorio:** https://github.com/carozuniga/sd-exam1/tree/master/A00315292
 
 ### Solución a las preguntas
 
